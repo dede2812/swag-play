@@ -1,0 +1,157 @@
+/* SWAG RUSH — La Semana Imposible · Identidad visual oficial SWAG (Atlas ch.18) */
+:root{
+  --swag-black:#0B0B0D; --ice:#F7F9FC; --red:#D7262E; --red-light:#FF7379;
+  --aqua:#5DC1B9; --aqua-light:#9CE0DB; --silver:#B7BEC9; --lgray:#D9DEE8;
+  --gold:#F2A900; --card:#16161B; --line:#2C2C36;
+  --blue:#3E63DD; --blue-light:#7D97F4; /* Academia (UI de la app) */
+  --font:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#050507}
+body{font-family:var(--font);color:var(--ice);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+#app{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:
+  radial-gradient(120% 90% at 50% 0%,#12121a 0%,#050507 70%)}
+#game{display:block;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px #1c1c26;touch-action:none}
+.hidden{display:none!important}
+
+/* ---------- HUD ---------- */
+#hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;align-items:center}
+.hud-top{width:min(94vw,420px);display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 4px 0}
+.hud-energy{flex:1;height:16px;background:#1b1b24;border:1px solid var(--line);border-radius:999px;position:relative;overflow:hidden}
+#energy-fill{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--red),var(--gold),var(--aqua));transition:width .18s ease;box-shadow:0 0 12px rgba(93,193,185,.5)}
+.hud-energy-ico{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:10px;filter:drop-shadow(0 1px 2px #000)}
+.hud-days{display:flex;gap:5px}
+.hud-days .dot{width:9px;height:9px;border-radius:50%;background:#262633;border:1px solid var(--line);transition:all .3s}
+.hud-days .dot.done{background:var(--aqua);box-shadow:0 0 8px var(--aqua)}
+.hud-days .dot.now{background:var(--red);box-shadow:0 0 10px var(--red);transform:scale(1.25)}
+.icon-btn{pointer-events:auto;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:rgba(22,22,27,.85);color:var(--ice);font-size:13px;cursor:pointer}
+.hud-score-row{margin-top:8px;display:flex;align-items:center;gap:12px}
+#score{font-size:clamp(30px,8vw,42px);font-weight:900;letter-spacing:-.5px;text-shadow:0 4px 20px rgba(0,0,0,.8);font-variant-numeric:tabular-nums}
+#combo-badge{font-weight:900;font-size:13px;letter-spacing:1px;padding:6px 12px;border-radius:999px;color:#0B0B0D;
+  background:linear-gradient(90deg,var(--gold),var(--red-light),var(--aqua-light));animation:comboPulse .5s infinite alternate;box-shadow:0 0 24px rgba(242,169,0,.55)}
+@keyframes comboPulse{from{transform:scale(1)}to{transform:scale(1.08)}}
+.hud-pillars{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;gap:14px}
+.pip{width:52px;height:52px;border-radius:16px;background:rgba(22,22,27,.8);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.45;transition:all .25s;filter:grayscale(.7)}
+.pip.lit{opacity:1;filter:none;transform:translateY(-6px) scale(1.06)}
+.pip-a.lit{border-color:var(--blue-light);box-shadow:0 0 18px rgba(62,99,221,.6)}
+.pip-d.lit{border-color:var(--red-light);box-shadow:0 0 18px rgba(215,38,46,.6)}
+.pip-b.lit{border-color:var(--aqua-light);box-shadow:0 0 18px rgba(93,193,185,.6)}
+
+/* ---------- Banners / toast / countdown ---------- */
+#day-banner{position:absolute;top:34%;left:0;right:0;text-align:center;pointer-events:none;z-index:5}
+#day-banner span{display:inline-block;font-size:clamp(38px,11vw,64px);font-weight:900;letter-spacing:6px;padding:10px 34px;
+  background:linear-gradient(90deg,transparent,rgba(11,11,13,.85) 18%,rgba(11,11,13,.85) 82%,transparent);
+  text-shadow:0 0 30px var(--aqua),0 4px 0 rgba(0,0,0,.4);animation:bannerIn 2.4s ease forwards}
+@keyframes bannerIn{0%{opacity:0;transform:scale(.7)}12%{opacity:1;transform:scale(1.05)}22%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(1.02) translateY(-10px)}}
+#countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:120px;font-weight:900;pointer-events:none;text-shadow:0 0 40px var(--red);z-index:6}
+#countdown.pop{animation:cdPop .9s ease forwards}
+@keyframes cdPop{0%{opacity:0;transform:scale(2.2)}25%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.8)}}
+#toast{position:absolute;bottom:22%;left:50%;transform:translateX(-50%);background:rgba(22,22,27,.95);border:1px solid var(--line);padding:12px 22px;border-radius:14px;font-weight:700;z-index:7;box-shadow:0 10px 40px rgba(0,0,0,.6);white-space:nowrap}
+
+/* ---------- Screens ---------- */
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:10;padding:16px;overflow-y:auto}
+.screen.active{display:flex}
+#screen-menu{background:transparent}
+#screen-howto,#screen-pause,#screen-results,#screen-swag{background:rgba(5,5,7,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.card{width:min(92vw,400px);max-height:92vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px 22px;text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.7)}
+.card h2{font-size:26px;font-weight:900;letter-spacing:-.5px;margin-bottom:14px}
+
+/* Menu */
+.menu-inner{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(92vw,400px);padding-bottom:20px}
+.menu-logo{width:min(56vw,240px);filter:drop-shadow(0 10px 40px rgba(215,38,46,.35));animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.game-title{font-size:clamp(44px,13vw,68px);font-weight:900;letter-spacing:-2px;line-height:.95;
+  background:linear-gradient(180deg,#fff 30%,var(--silver));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 20px 50px rgba(0,0,0,.5)}
+.game-sub{font-weight:900;letter-spacing:8px;font-size:clamp(12px,3.4vw,16px);color:var(--red-light);text-shadow:0 0 20px rgba(215,38,46,.6)}
+.menu-tag{color:var(--silver);font-size:15px;line-height:1.5;text-align:center}
+.menu-tag b{font-weight:800}
+.c-a{color:var(--blue-light)} .c-d{color:var(--red-light)} .c-b{color:var(--aqua-light)}
+.menu-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.menu-best{display:flex;gap:14px;align-items:center;color:var(--silver);font-size:14px}
+.menu-best b{color:var(--gold);font-variant-numeric:tabular-nums}
+.medal-chip{padding:4px 12px;border-radius:999px;font-weight:800;font-size:12px;background:#221a08;border:1px solid var(--gold);color:var(--gold)}
+.menu-wordmark{width:120px;opacity:.55;margin-top:6px}
+
+/* Skins */
+.skin-select{margin-top:2px}
+.skin-label{font-size:11px;letter-spacing:3px;color:var(--silver);font-weight:800;margin-bottom:8px;text-align:center}
+.skin-row{display:flex;gap:10px;justify-content:center}
+.skin{width:58px;height:58px;border-radius:18px;border:2px solid var(--line);background:var(--card);cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.skin.sel{border-color:var(--ice);transform:scale(1.08);box-shadow:0 0 20px rgba(247,249,252,.25)}
+.skin .sw{width:30px;height:30px;border-radius:10px}
+.skin.locked{opacity:.5;cursor:not-allowed}
+.skin .lock{position:absolute;bottom:-6px;right:-6px;font-size:13px;background:var(--card);border-radius:50%;padding:2px;border:1px solid var(--line)}
+
+/* Buttons */
+.btn{pointer-events:auto;font-family:var(--font);font-weight:800;border:none;border-radius:999px;cursor:pointer;transition:transform .12s,box-shadow .2s,filter .2s;color:var(--ice)}
+.btn:active{transform:scale(.95)}
+.btn-primary{background:var(--red);box-shadow:0 8px 30px rgba(215,38,46,.45);padding:14px 34px;font-size:17px}
+.btn-primary:hover{filter:brightness(1.12);box-shadow:0 10px 36px rgba(215,38,46,.6)}
+.btn-xl{font-size:19px;padding:17px 44px;letter-spacing:.5px}
+.btn-aqua{background:var(--aqua);color:#07201d;padding:13px 26px;font-size:15px;box-shadow:0 8px 26px rgba(93,193,185,.35)}
+.btn-gold{background:var(--gold);color:#241a00;padding:13px 26px;font-size:15px;box-shadow:0 8px 26px rgba(242,169,0,.35)}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--silver);padding:11px 20px;font-size:14px}
+.btn-ghost:hover{border-color:var(--silver);color:var(--ice)}
+
+/* How-to */
+.howto-card{text-align:left}
+.howto-card h2{text-align:center}
+.howto-step{display:flex;gap:14px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line)}
+.howto-step:last-of-type{border:none}
+.howto-ico{font-size:26px;min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:#101016;border-radius:14px;border:1px solid var(--line)}
+.pillars-demo{gap:2px;font-size:17px}
+.howto-step b{display:block;font-size:15px;margin-bottom:2px}
+.howto-step span{color:var(--silver);font-size:13.5px;line-height:1.45}
+.howto-card .btn{width:100%;margin-top:16px}
+
+/* Pause */
+.pause-card{display:flex;flex-direction:column;gap:12px}
+.pause-day{color:var(--red-light);font-weight:900;letter-spacing:5px;margin-bottom:6px}
+
+/* Results */
+.results-card{display:flex;flex-direction:column;align-items:center;gap:10px}
+.results-kicker{font-weight:900;letter-spacing:3px;font-size:13px;color:var(--aqua-light)}
+.results-kicker.lose{color:var(--red-light)}
+.results-card h2{margin-bottom:2px}
+.medal-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;margin:4px 0}
+.medal{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;
+  background:radial-gradient(circle at 32% 28%,#3a3a48,#17171f 70%);border:3px solid var(--line);animation:medalIn .7s cubic-bezier(.2,1.6,.4,1) forwards;transform:scale(0)}
+.medal.m-bronce{border-color:#CD7F32;box-shadow:0 0 40px rgba(205,127,50,.5)}
+.medal.m-plata{border-color:var(--silver);box-shadow:0 0 40px rgba(183,190,201,.5)}
+.medal.m-oro{border-color:var(--gold);box-shadow:0 0 44px rgba(242,169,0,.6)}
+.medal.m-semana{border-color:var(--aqua);box-shadow:0 0 44px rgba(93,193,185,.55)}
+@keyframes medalIn{to{transform:scale(1)}}
+#medal-name{font-weight:900;letter-spacing:2px;font-size:13px;color:var(--lgray)}
+.final-score{display:flex;flex-direction:column;align-items:center;line-height:1}
+.final-score span{font-size:clamp(48px,14vw,64px);font-weight:900;font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,#fff,var(--aqua-light));-webkit-background-clip:text;background-clip:text;color:transparent}
+.final-score small{letter-spacing:4px;font-weight:800;font-size:11px;color:var(--silver);margin-top:4px}
+.new-record{color:var(--gold);font-weight:900;font-size:15px;animation:comboPulse .5s infinite alternate}
+.breakdown{list-style:none;width:100%;margin-top:4px}
+.breakdown li{display:flex;justify-content:space-between;padding:7px 6px;font-size:13.5px;color:var(--silver);border-bottom:1px dashed var(--line)}
+.breakdown li:last-child{border:none}
+.breakdown b{color:var(--ice);font-variant-numeric:tabular-nums}
+.unlock-note{font-size:13px;color:var(--aqua-light);background:rgba(93,193,185,.1);border:1px solid rgba(93,193,185,.4);padding:8px 14px;border-radius:12px}
+.results-actions{display:flex;flex-direction:column;gap:9px;width:100%;margin-top:8px}
+.results-actions .btn{width:100%}
+
+/* SWAG overlay */
+.swag-card{display:flex;flex-direction:column;align-items:center;gap:13px}
+.swag-logo{width:150px;filter:drop-shadow(0 8px 30px rgba(215,38,46,.4))}
+.swag-card h2{font-size:24px;margin:0}
+.swag-card p{color:var(--silver);font-size:14.5px;line-height:1.55}
+.swag-pillars{display:flex;gap:9px;width:100%}
+.swag-pillar{flex:1;background:#101016;border:1px solid var(--line);border-radius:16px;padding:12px 6px;display:flex;flex-direction:column;gap:3px;align-items:center}
+.swag-pillar i{font-size:24px;font-style:normal}
+.swag-pillar b{font-size:13px}
+.swag-pillar span{font-size:10.5px;color:var(--silver)}
+.swag-note{font-size:12px!important;background:rgba(242,169,0,.08);border:1px solid rgba(242,169,0,.35);border-radius:12px;padding:10px 12px}
+.swag-note b{color:var(--gold)}
+.swag-small{font-size:12px!important}
+.swag-card .btn-xl{width:100%}
+
+@media (min-width:520px){.card{width:420px}}
+@media (prefers-reduced-motion:reduce){
+  .menu-logo,#combo-badge,.new-record{animation:none!important}
+  #day-banner span{animation-duration:.1s}
+}
