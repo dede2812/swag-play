@@ -43,6 +43,7 @@ export class Engine {
       else if (k === 'ArrowUp' || k === 'w' || k === 'W') push('jump');
       else if (k === ' ' || k === 'Enter') { push('confirm'); if (k === ' ') e.preventDefault(); }
       else if (k === 'Escape' || k === 'p' || k === 'P') push('pause');
+      else if (k >= '1' && k <= '5') push(`ab${k}`); // habilidades Académicas
     });
     // Gestos táctiles sobre el canvas
     let sx = 0, sy = 0, st = 0;

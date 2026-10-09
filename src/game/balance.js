@@ -11,18 +11,23 @@ export function createRunState() {
     comboActivations: 0,
     itemsCollected: 0,
     starsCollected: 0,
+    coinsCollected: 0,      // ⚡ monedas Energía SWAG recogidas
+    ringsPassed: 0,         // anillos de precisión atravesados
+    cardCollected: false,   // carta SWAG oculta
+    abilitiesUsed: 0,
     hits: 0,
     lastHitAt: -Infinity,
   };
 }
 
-export function drainPerSec(day) {
-  return TUNING.energy.drainPerSec + day * TUNING.energy.drainPerDay;
+// El drenaje lo define el nivel (no el día): curva suave por progreso 0..1
+export function drainPerSec(base, progress) {
+  return base * (1 + progress * 0.25);
 }
 
-// Avanza la energía por tiempo; devuelve true si el jugador sigue con vida
-export function tickEnergy(state, dt) {
-  state.energy = Math.max(0, state.energy - drainPerSec(state.day) * dt);
+// Avanza el ritmo por tiempo (rate = drenaje/s del nivel); true si sigue con vida
+export function tickEnergy(state, dt, rate) {
+  state.energy = Math.max(0, state.energy - rate * dt);
   return state.energy > 0;
 }
 
@@ -59,6 +64,19 @@ export function collectPillar(state, pillar, now) {
 
 export function collectStar(state) {
   state.starsCollected++;
+}
+
+export function collectCoin(state) {
+  state.coinsCollected++;
+  state.energy = Math.min(TUNING.energy.max, state.energy + 1.5); // respiro pequeño
+}
+
+export function passRing(state) {
+  state.ringsPassed++;
+}
+
+export function collectCard(state) {
+  state.cardCollected = true;
 }
 
 // Golpe de obstáculo (respeta invulnerabilidad). Devuelve true si aplicó daño.

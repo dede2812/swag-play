@@ -1,36 +1,55 @@
-// Identidad oficial SWAG (Kit Visual 3.0 / Atlas ch.18)
+// Identidad oficial SWAG — tokens 3.0 tomados del repositorio SWAG:
+// SWAG_IDENTIDAD_VISUAL_FINAL/11_RECURSOS_DE_DESARROLLO/brand-tokens.json
 export const BRAND = {
-  black: '#0B0B0D', ice: '#F7F9FC',
-  red: '#D7262E', redLight: '#FF7379',
-  aqua: '#5DC1B9', aquaLight: '#9CE0DB',
-  silver: '#B7BEC9', lgray: '#D9DEE8',
-  gold: '#F2A900', card: '#16161B', line: '#2C2C36',
-  blue: '#3E63DD', blueLight: '#7D97F4', // pilar Academia (UI de la app)
+  black: '#0B0B0D',
+  ice: '#F7F9FC',
+  ink: '#18243D',
+  muted: '#59657B',
+  paper: '#F5F8FF',
+  red: '#D7262E',
+  redLight: '#FF7379',
+  gold: '#F2A900',
+  yellow: '#FFC857',
+  silver: '#B8C5D6',
+  // módulos oficiales (brand-tokens.json → modules)
+  blue: '#3456E8',    // estudio / Academia
+  coral: '#FF766C',   // entreno / Deporte
+  cyan: '#35D6E6',    // bienestar
+  mint: '#64D8AB',
+  violet: '#9273EF',
+  cardDark: '#17171B',
+  cardLine: '#2B2B32',
+  // alias heredados (cielos y efectos)
+  aqua: '#5DC1B9',
+  aquaLight: '#9CE0DB',
+  card: '#16161B',
+  line: '#2C2C36',
+  fontBrand: "'Montserrat', 'Segoe UI', system-ui, sans-serif",
+  fontBody: "'Inter', 'Segoe UI', system-ui, sans-serif",
 };
 
-// Pilares SWAG = mecánica central del juego
+// Cielo de cada día (amanecer aqua → noche roja): atmósfera de la campaña
+export const DAY_SKIES = [
+  { top: '#0A0E1E', mid: '#123043', glow: '#5DC1B9' }, // Lunes: amanecer aqua
+  { top: '#0B0A1C', mid: '#231A3E', glow: '#9273EF' }, // Martes: violeta
+  { top: '#0A0D1F', mid: '#1B2B4A', glow: '#3456E8' }, // Miércoles: cobalto
+  { top: '#100A18', mid: '#3A1626', glow: '#FF766C' }, // Jueves: coral
+  { top: '#050507', mid: '#2A0E14', glow: '#D7262E' }, // Viernes: noche roja
+];
+
 export const PILLARS = {
-  A: { key: 'A', name: 'Academia',  color: '#3E63DD', glow: '#7D97F4', freq: 523.25 }, // Do5
-  D: { key: 'D', name: 'Deporte',   color: '#D7262E', glow: '#FF7379', freq: 659.25 }, // Mi5
-  B: { key: 'B', name: 'Bienestar', color: '#5DC1B9', glow: '#9CE0DB', freq: 783.99 }, // Sol5
+  A: { id: 'A', name: 'Academia',  color: BRAND.blue,  glow: '#8FA6FF', freq: 523 },
+  D: { id: 'D', name: 'Deporte',   color: BRAND.coral, glow: '#FFAB9E', freq: 659 },
+  B: { id: 'B', name: 'Bienestar', color: BRAND.cyan,  glow: '#9BEEF6', freq: 784 },
 };
 
 export const DAYS = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES'];
 
-// Paletas de cielo por día (horizonte → cénit), modo oscuro de marca
-export const DAY_SKIES = [
-  { top: '#0A0E1E', mid: '#123043', glow: '#5DC1B9' }, // Lunes: amanecer aqua
-  { top: '#0B0B1F', mid: '#1B2A5E', glow: '#7D97F4' }, // Martes: azul cobalto
-  { top: '#160B14', mid: '#3A1E2B', glow: '#F2A900' }, // Miércoles: atardecer dorado
-  { top: '#100A1E', mid: '#2A1745', glow: '#B98CF2' }, // Jueves: violeta
-  { top: '#120609', mid: '#3A0E14', glow: '#FF7379' }, // Viernes: noche roja de victoria
-];
-
 export const COPY = {
-  tagline: 'Tu día, con espacio.',
-  winKicker: '¡SEMANA COMPLETADA!',
-  winTitle: 'Domaste la semana imposible',
-  loseKicker: 'SIN ENERGÍA…',
-  loseTitle: 'La semana te ganó. ¿Revancha?',
-  swagNote: 'SWAG está en etapa de prototipo. Las pantallas son la interfaz del prototipo.',
+  winKicker: '¡NIVEL SUPERADO!',
+  winTitle: 'Domaste el día',
+  loseKicker: 'PERDISTE EL RITMO…',
+  loseTitle: 'El caos te alcanzó',
+  weekKicker: '¡SEMANA COMPLETADA!',
+  weekTitle: 'Domaste la semana imposible',
 };

@@ -4,10 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>SWAG RUSH — La Semana Imposible</title>
-<meta name="description" content="Corre la semana imposible: equilibra Academia, Deporte y Bienestar, esquiva el caos y descubre SWAG. Juego oficial de SWAG.">
+<meta name="description" content="Corre la semana imposible: equilibra Academia, Deporte y Bienestar, domina habilidades, gana Energía SWAG y supera los 5 niveles. Juego oficial de SWAG.">
 <meta name="theme-color" content="#0B0B0D">
-<link rel="icon" type="image/png" href="assets/brand/favicon.png">
-<link rel="apple-touch-icon" href="assets/brand/favicon.png">
+<link rel="icon" href="assets/brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/brand/favicon-16.png">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/brand/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/brand/icon-512.png">
+<link rel="preload" href="assets/fonts/Montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Inter-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -17,13 +23,16 @@
   <!-- HUD -->
   <div id="hud" class="hidden" aria-hidden="true">
     <div class="hud-top">
-      <div class="hud-energy" role="meter" aria-label="Energía">
+      <div class="hud-energy" role="meter" aria-label="Ritmo">
         <div id="energy-fill"></div>
-        <span class="hud-energy-ico">⚡</span>
+        <span class="hud-energy-ico">🎧</span>
       </div>
-      <div class="hud-days" id="day-dots" aria-label="Días de la semana"></div>
-      <button id="btn-pause" class="icon-btn" aria-label="Pausar">❚❚</button>
+      <div class="hud-right">
+        <div id="hud-coins" class="coin-chip" title="Energía SWAG">⚡ 0</div>
+        <button id="btn-pause" class="icon-btn" aria-label="Pausar">❚❚</button>
+      </div>
     </div>
+    <div id="level-chip" class="level-chip">LUNES · CALENTAMIENTO</div>
     <div class="hud-score-row">
       <div id="score">0</div>
       <div id="combo-badge" class="hidden">MODO SWAG ×2</div>
@@ -31,8 +40,10 @@
     <div class="hud-pillars" id="pillar-pips" aria-label="Equilibrio: Academia, Deporte, Bienestar">
       <div class="pip pip-a" data-p="A"><i>📖</i></div>
       <div class="pip pip-d" data-p="D"><i>👟</i></div>
-      <div class="pip pip-b" data-p="B"><i>💙</i></div>
+      <div class="pip pip-b" data-p="B"><i>⚡</i></div>
     </div>
+    <div id="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
+    <div id="ability-bar" aria-label="Habilidades de Academia"></div>
   </div>
 
   <!-- Day banner -->
@@ -48,21 +59,52 @@
       <img class="menu-logo" src="assets/brand/logo-iridiscente.png" alt="SWAG">
       <h1 class="game-title">SWAG&nbsp;RUSH</h1>
       <p class="game-sub">LA SEMANA IMPOSIBLE</p>
-      <p class="menu-tag">Equilibra <b class="c-a">Academia</b>, <b class="c-d">Deporte</b> y <b class="c-b">Bienestar</b>.<br>Sobrevive de lunes a viernes.</p>
+      <div class="menu-coins coin-chip-lg" title="Tu Energía SWAG">⚡ <b id="menu-coins">0</b></div>
       <button id="btn-play" class="btn btn-primary btn-xl">▶ JUGAR</button>
       <div class="menu-row">
+        <button id="btn-shop" class="btn btn-shop">⚡ Mejoras</button>
         <button id="btn-howto" class="btn btn-ghost">¿Cómo jugar?</button>
+      </div>
+      <div class="menu-row">
         <button id="btn-sound" class="btn btn-ghost" aria-pressed="true">🔊 Sonido</button>
       </div>
       <div class="menu-best">
         <span>Récord: <b id="menu-best">0</b></span>
-        <span id="menu-medal" class="medal-chip hidden"></span>
+        <span id="menu-week" class="medal-chip hidden">🏆 SEMANA SUPERADA</span>
       </div>
-      <div class="skin-select" id="skin-select" aria-label="Elige tu estilo">
-        <p class="skin-label">TU ESTILO</p>
-        <div class="skin-row" id="skin-row"></div>
+      <p class="menu-foot">Equilibra <b class="c-a">Academia</b> · <b class="c-d">Deporte</b> · <b class="c-b">Bienestar</b></p>
+    </div>
+  </section>
+
+  <!-- NIVELES -->
+  <section id="screen-levels" class="screen">
+    <div class="card wide-card">
+      <h2>La semana imposible</h2>
+      <p class="card-sub">5 días, 5 desafíos. Supera un día para desbloquear el siguiente.</p>
+      <div id="levels-list" class="levels-list"></div>
+      <div class="row-actions">
+        <button id="btn-levels-back" class="btn btn-ghost">← Menú</button>
       </div>
-      <img class="menu-wordmark" src="assets/brand/wordmark-blanco.png" alt="SWAG — tu día, con espacio">
+    </div>
+  </section>
+
+  <!-- TIENDA / MEJORAS -->
+  <section id="screen-shop" class="screen">
+    <div class="card wide-card">
+      <div class="shop-head">
+        <h2>Mejoras</h2>
+        <div class="coin-chip-lg">⚡ <b id="shop-coins">0</b></div>
+      </div>
+      <div class="shop-tabs" role="tablist">
+        <button class="shop-tab active" data-tab="abilities" role="tab">🎓 Habilidades</button>
+        <button class="shop-tab" data-tab="skins" role="tab">👕 Estilos</button>
+        <button class="shop-tab" data-tab="effects" role="tab">✨ Efectos</button>
+        <button class="shop-tab" data-tab="cards" role="tab">🂠 Colección</button>
+      </div>
+      <div id="shop-grid" class="shop-grid"></div>
+      <div class="row-actions">
+        <button id="btn-shop-back" class="btn btn-ghost">← Volver</button>
+      </div>
     </div>
   </section>
 
@@ -70,11 +112,11 @@
   <section id="screen-howto" class="screen">
     <div class="card howto-card">
       <h2>Cómo jugar</h2>
-      <div class="howto-step"><div class="howto-ico">↔️</div><div><b>Muévete entre carriles</b><span>Desliza ◀ ▶ o usa ← → / A D. Salta con ▲, W o deslizando hacia arriba.</span></div></div>
-      <div class="howto-step"><div class="howto-ico pillars-demo"><i class="c-a">📖</i><i class="c-d">👟</i><i class="c-b">💙</i></div><div><b>Equilibra tus 3 pilares</b><span>Recoge Academia, Deporte y Bienestar. Cada uno recarga tu energía ⚡.</span></div></div>
-      <div class="howto-step"><div class="howto-ico">✨</div><div><b>Activa el MODO SWAG</b><span>Combina los 3 pilares en 10 segundos y duplica tus puntos.</span></div></div>
-      <div class="howto-step"><div class="howto-ico">🚧</div><div><b>Esquiva el caos</b><span>Notificaciones, distracciones y barreras drenan tu energía. Salta las barreras.</span></div></div>
-      <div class="howto-step"><div class="howto-ico">🏁</div><div><b>Completa la semana</b><span>Sobrevive de lunes a viernes, gana medallas y desbloquea estilos.</span></div></div>
+      <div class="howto-step"><div class="howto-ico">↔️</div><div><b>Muévete y salta</b><span>Desliza ◀ ▶ o ← →. Salta con ▲, W o desliza hacia arriba.</span></div></div>
+      <div class="howto-step"><div class="howto-ico pillars-demo"><i class="c-a">📖</i><i class="c-d">👟</i><i class="c-b">⚡</i></div><div><b>Equilibra tus 3 pilares</b><span>Academia, Deporte y Bienestar recargan tu ritmo 🎧. Los 3 en 10 s = <b>MODO SWAG ×2</b>.</span></div></div>
+      <div class="howto-step"><div class="howto-ico">🎓</div><div><b>Habilidades de Academia</b><span>Teclas 1-5 o botones: 💨 Velocidad · 🎯 Concentración · 👁️ Memoria · 🧭 Estrategia · ✖️ Multiplicador. Tienen recarga: úsalas en el momento justo.</span></div></div>
+      <div class="howto-step"><div class="howto-ico">⚡</div><div><b>Energía SWAG (moneda)</b><span>Recoge monedas, supera niveles y cumple objetivos. Gástala en <b>Mejoras</b>: habilidades, estilos y efectos.</span></div></div>
+      <div class="howto-step"><div class="howto-ico">🏁</div><div><b>5 niveles progresivos</b><span>De lunes a viernes. Gana hasta 3 ⭐ por nivel y encuentra la 🂠 carta oculta de cada día.</span></div></div>
       <button id="btn-howto-play" class="btn btn-primary btn-xl">¡ENTENDIDO, A JUGAR!</button>
       <button id="btn-howto-back" class="btn btn-ghost" style="width:100%;margin-top:9px">← Volver al menú</button>
     </div>
@@ -94,15 +136,19 @@
   <!-- RESULTADOS -->
   <section id="screen-results" class="screen">
     <div class="card results-card">
-      <p id="results-kicker" class="results-kicker">¡SEMANA COMPLETADA!</p>
-      <h2 id="results-title">La hiciste imposible…</h2>
-      <div class="medal-wrap"><div id="medal" class="medal"><span id="medal-ico">🥇</span></div><p id="medal-name">MEDALLA DE ORO</p></div>
+      <p id="results-kicker" class="results-kicker">¡NIVEL SUPERADO!</p>
+      <h2 id="results-title">Domaste el día</h2>
+      <div id="results-stars" class="results-stars"><span>☆</span><span>☆</span><span>☆</span></div>
       <div class="final-score"><span id="final-score">0</span><small>PUNTOS SWAG</small></div>
       <p id="new-record" class="new-record hidden">🔥 ¡NUEVO RÉCORD!</p>
       <ul class="breakdown" id="breakdown"></ul>
+      <div class="coins-earned"><b>⚡ Energía ganada</b><ul id="coins-breakdown"></ul><div class="coins-total">Total: <b id="coins-total">+0 ⚡</b></div></div>
+      <ul class="objectives" id="objectives"></ul>
       <p id="unlock-note" class="unlock-note hidden"></p>
       <div class="results-actions">
-        <button id="btn-again" class="btn btn-primary">🔁 Jugar de nuevo</button>
+        <button id="btn-next" class="btn btn-primary hidden">▶ Siguiente día</button>
+        <button id="btn-again" class="btn btn-primary">🔁 Reintentar</button>
+        <button id="btn-results-shop" class="btn btn-shop">⚡ Mejoras</button>
         <button id="btn-share" class="btn btn-aqua">📤 Compartir</button>
         <button id="btn-swag" class="btn btn-gold">✨ Conoce el proyecto</button>
         <button id="btn-menu" class="btn btn-ghost">Menú</button>
@@ -115,11 +161,11 @@
     <div class="card swag-card">
       <img class="swag-logo" src="assets/brand/logo-iridiscente.png" alt="SWAG">
       <h2>Tu día, con espacio.</h2>
-      <p>Lo que hiciste en el juego —equilibrar <b class="c-a">Academia</b>, <b class="c-d">Deporte</b> y <b class="c-b">Bienestar</b>— es exactamente lo que SWAG organiza contigo en la vida real.</p>
+      <p>Lo que haces en el juego es lo que SWAG hace contigo en la vida real:</p>
       <div class="swag-pillars">
-        <div class="swag-pillar"><i>📖</i><b>Academia</b><span>Practica y aprende</span></div>
-        <div class="swag-pillar"><i>👟</i><b>Deporte</b><span>Prepara tu sesión</span></div>
-        <div class="swag-pillar"><i>💙</i><b>Bienestar</b><span>Escucha tu ritmo</span></div>
+        <div class="swag-pillar"><i>🎓</i><b>Academia</b><span>Tus clases, tareas y exámenes en orden — como las habilidades que usas aquí.</span></div>
+        <div class="swag-pillar"><i>👟</i><b>Deporte</b><span>Tus entrenamientos en el plan — como los desafíos que superas corriendo.</span></div>
+        <div class="swag-pillar"><i>⚡</i><b>Bienestar</b><span>Tu energía, sueño y descanso — la Energía SWAG del juego nace de este registro diario.</span></div>
       </div>
       <p class="swag-note">SWAG está en etapa de prototipo. Las pantallas mostradas son la <b>interfaz del prototipo</b>; las funciones finales se anunciarán en el lanzamiento oficial.</p>
       <button id="btn-waitlist" class="btn btn-primary btn-xl">✨ Quiero conocer el proyecto</button>
