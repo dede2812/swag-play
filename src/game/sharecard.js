@@ -1,11 +1,11 @@
 // Tarjeta de resultado compartible (1080×1350, 4:5) generada 100% en el cliente
-import { BRAND, DAYS } from '../config/brand.js';
+import { BRAND } from '../config/brand.js';
 import { fmt } from './scoring.js';
 import { roundRect } from '../core/utils.js';
 
 const W = 1080, H = 1350;
 
-export async function makeShareCard({ score, badge, daysCompleted, win, best }) {
+export async function makeShareCard({ score, stars, levelName, day, coinsEarned, win, weekCleared, best }) {
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d');
@@ -14,17 +14,17 @@ export async function makeShareCard({ score, badge, daysCompleted, win, best }) 
   const bg = ctx.createLinearGradient(0, 0, W, H);
   bg.addColorStop(0, '#0B0B0D');
   bg.addColorStop(0.55, '#16161B');
-  bg.addColorStop(1, win ? '#123B38' : '#3A0E14');
+  bg.addColorStop(1, win ? '#0E3A40' : '#3A0E14');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  // aros decorativos
-  ctx.strokeStyle = 'rgba(93,193,185,.16)'; ctx.lineWidth = 2;
+  // aros decorativos cian (bienestar)
+  ctx.strokeStyle = 'rgba(53,214,230,.16)'; ctx.lineWidth = 2;
   for (const r of [380, 520, 660]) {
     ctx.beginPath(); ctx.arc(W / 2, 560, r, 0, Math.PI * 2); ctx.stroke();
   }
 
-  // logo iridiscente
+  // logo iridiscente oficial
   try {
     const logo = await loadImage('assets/brand/logo-iridiscente.png');
     const lw = 420, lh = logo.height * (lw / logo.width);
@@ -33,54 +33,56 @@ export async function makeShareCard({ score, badge, daysCompleted, win, best }) 
 
   ctx.textAlign = 'center';
   // kicker
-  ctx.fillStyle = win ? BRAND.aquaLight : BRAND.redLight;
-  ctx.font = '900 44px "Segoe UI", system-ui, sans-serif';
-  ctx.fillText(win ? '¡SEMANA IMPOSIBLE COMPLETADA!' : 'CASI DOMO LA SEMANA', W / 2, 480);
+  ctx.fillStyle = win ? '#9BEEF6' : BRAND.redLight;
+  ctx.font = '900 44px Montserrat, "Segoe UI", system-ui, sans-serif';
+  const kicker = weekCleared ? '¡SEMANA IMPOSIBLE COMPLETADA!' : win ? `¡${day} SUPERADO!` : `EL ${day} ME GANÓ…`;
+  ctx.fillText(kicker, W / 2, 480);
 
   // puntuación
   ctx.fillStyle = BRAND.ice;
-  ctx.font = '900 220px "Segoe UI", system-ui, sans-serif';
-  ctx.shadowColor = 'rgba(93,193,185,.45)'; ctx.shadowBlur = 60;
-  ctx.fillText(fmt(score), W / 2, 700);
+  ctx.font = '900 210px Montserrat, "Segoe UI", system-ui, sans-serif';
+  ctx.shadowColor = 'rgba(53,214,230,.45)'; ctx.shadowBlur = 60;
+  ctx.fillText(fmt(score), W / 2, 690);
   ctx.shadowBlur = 0;
   ctx.fillStyle = BRAND.silver;
-  ctx.font = '800 40px "Segoe UI", system-ui, sans-serif';
-  ctx.fillText('P U N T O S   S W A G', W / 2, 765);
+  ctx.font = '800 38px Montserrat, "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('P U N T O S   S W A G', W / 2, 752);
 
-  // medalla
-  if (badge) {
-    ctx.font = '900 52px "Segoe UI", system-ui, sans-serif';
-    ctx.fillStyle = BRAND.gold;
-    ctx.fillText(`${badge.ico} ${badge.name}`, W / 2, 870);
+  // estrellas del nivel
+  if (win) {
+    ctx.font = '400 84px system-ui';
+    for (let i = 0; i < 3; i++) {
+      ctx.globalAlpha = i < stars ? 1 : 0.25;
+      ctx.fillText('⭐', W / 2 + (i - 1) * 110, 860);
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = BRAND.silver;
+    ctx.font = '800 34px Montserrat, "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(levelName.toUpperCase(), W / 2, 930);
   }
 
-  // días completados
-  const dotY = 950;
-  for (let i = 0; i < 5; i++) {
-    ctx.beginPath();
-    ctx.arc(W / 2 + (i - 2) * 90, dotY, 26, 0, Math.PI * 2);
-    ctx.fillStyle = i < daysCompleted ? BRAND.aqua : '#2C2C36';
-    ctx.fill();
-    ctx.fillStyle = i < daysCompleted ? '#07201d' : BRAND.silver;
-    ctx.font = '900 26px "Segoe UI", system-ui, sans-serif';
-    ctx.fillText(DAYS[i][0], W / 2 + (i - 2) * 90, dotY + 9);
+  // energía ganada
+  if (coinsEarned > 0) {
+    ctx.fillStyle = BRAND.cyan;
+    ctx.font = '900 46px Montserrat, "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(`+${fmt(coinsEarned)} ⚡ ENERGÍA SWAG`, W / 2, 1010);
   }
   if (best) {
     ctx.fillStyle = BRAND.gold;
-    ctx.font = '900 38px "Segoe UI", system-ui, sans-serif';
-    ctx.fillText('🔥 NUEVO RÉCORD PERSONAL', W / 2, 1050);
+    ctx.font = '900 38px Montserrat, "Segoe UI", system-ui, sans-serif';
+    ctx.fillText('🔥 NUEVO RÉCORD PERSONAL', W / 2, 1080);
   }
 
   // CTA
   ctx.fillStyle = BRAND.red;
-  roundRect(ctx, W / 2 - 330, 1110, 660, 96, 48); ctx.fill();
+  roundRect(ctx, W / 2 - 330, 1130, 660, 96, 48); ctx.fill();
   ctx.fillStyle = BRAND.ice;
-  ctx.font = '900 40px "Segoe UI", system-ui, sans-serif';
-  ctx.fillText('JUEGA SWAG RUSH', W / 2, 1172);
+  ctx.font = '900 40px Montserrat, "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('JUEGA SWAG RUSH', W / 2, 1192);
 
   ctx.fillStyle = BRAND.silver;
-  ctx.font = '700 30px "Segoe UI", system-ui, sans-serif';
-  ctx.fillText('SWAG · Tu día, con espacio · Conoce el proyecto', W / 2, 1275);
+  ctx.font = '700 30px Inter, "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('SWAG · Tu día, con espacio · Conoce el proyecto', W / 2, 1290);
 
   return cv;
 }

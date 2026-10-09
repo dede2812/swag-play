@@ -1,6 +1,6 @@
 // El corredor: personaje vectorial de espaldas con ciclo de carrera, salto y estilos
 import { TUNING } from '../config/tuning.js';
-import { BRAND } from '../config/brand.js';
+import { BRAND } from '../config/brand.js'; // TUNING solo para físicas
 import { clamp, lerp } from '../core/utils.js';
 
 export class Player {
@@ -13,7 +13,7 @@ export class Player {
     this.runT = 0;
     this.lean = 0;            // inclinación al cambiar de carril
     this.landSquash = 0;
-    this.skin = TUNING.skins[0];
+    this.skin = { id: 'clasico', hoodie: '#D7262E', pants: '#1B1B24' }; // estilo por defecto
     this.iridT = 0;
   }
 

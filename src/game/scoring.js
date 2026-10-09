@@ -1,35 +1,25 @@
-// Lógica pura de puntuación, medallas y desbloqueos (sin DOM: se prueba en Node)
+// Puntuación por nivel, estrellas y desglose (sin DOM: se prueba en Node)
 import { TUNING } from '../config/tuning.js';
 
-export function medalFor(score) {
-  for (const m of TUNING.medals) if (score >= m.min) return m;
-  return null;
-}
-
-// Mejor reconocimiento de la partida: completar la semana supera a cualquier medalla
-export function badgeFor(score, weekCompleted) {
-  if (weekCompleted) return TUNING.weekBadge;
-  return medalFor(score);
-}
-
-export function skinUnlocks(badgeId) {
-  return TUNING.skins.filter((s) => s.unlock && s.unlock === badgeId).map((s) => s.id);
+// Estrellas del nivel según su configuración: 0..3
+export function starsFor(level, score) {
+  let n = 0;
+  for (const th of level.stars) if (score >= th) n++;
+  return n;
 }
 
 // Desglose de puntos para la pantalla de resultados
-export function breakdown({ distanceSec = 0, items = 0, stars = 0, comboPoints = 0, daysCompleted = 0, multAvg = 1 }) {
-  const distance = Math.round(distanceSec * TUNING.score.distancePerSec * multAvg);
-  const itemPts = items * TUNING.score.item;
-  const starPts = stars * TUNING.score.star;
-  const dayPts = daysCompleted * TUNING.score.dayBonus;
-  return {
-    distance,
-    items: itemPts,
-    stars: starPts,
-    comboBonus: comboPoints,
-    days: dayPts,
-    total: distance + itemPts + starPts + comboPoints + dayPts,
-  };
+export function breakdown({ distance = 0, items = 0, stars = 0, rings = 0, coinScore = 0, combo = 0, clear = 0 }) {
+  const rows = [
+    ['🏃 Distancia', Math.round(distance)],
+    ['📚 Ítems de pilar', Math.round(items)],
+    ['⭐ Estrellas SWAG', Math.round(stars)],
+    ['◎ Anillos de precisión', Math.round(rings)],
+    ['⚡ Puntos por monedas', Math.round(coinScore)],
+    ['✨ Bonos MODO SWAG', Math.round(combo)],
+    ['🏁 Nivel superado', Math.round(clear)],
+  ].filter(([, v]) => v > 0);
+  return { rows, total: Math.round(distance + items + stars + rings + coinScore + combo + clear) };
 }
 
 export function fmt(n) {

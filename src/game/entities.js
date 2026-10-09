@@ -140,14 +140,106 @@ export function drawBarrier(ctx, w, h, t) {
   ctx.restore();
 }
 
+// ⚡ Moneda Energía SWAG — la moneda del Bienestar (cian oficial)
+export function drawCoin(ctx, s, t) {
+  const spin = Math.abs(Math.cos(t * 3.2));
+  const sx = 0.35 + 0.65 * spin; // giro 3D simulado
+  ctx.save();
+  ctx.scale(sx, 1);
+  withGlow(ctx, BRAND.cyan, 16 * s, () => {
+    ctx.fillStyle = '#0E3A40';
+    ctx.beginPath(); ctx.arc(0, 0, 15 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = BRAND.cyan;
+    ctx.beginPath(); ctx.arc(0, 0, 12.5 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0B0B0D';
+    ctx.beginPath(); // rayo
+    ctx.moveTo(2.5 * s, -8.5 * s);
+    ctx.lineTo(-4.5 * s, 1.5 * s);
+    ctx.lineTo(-0.5 * s, 1.5 * s);
+    ctx.lineTo(-2.5 * s, 8.5 * s);
+    ctx.lineTo(4.5 * s, -1.5 * s);
+    ctx.lineTo(0.5 * s, -1.5 * s);
+    ctx.closePath(); ctx.fill();
+  });
+  ctx.restore();
+}
+
+// ◎ Anillo de precisión — atraviésalo en el carril correcto
+export function drawRing(ctx, s, t) {
+  const pulse = 1 + Math.sin(t * 5) * 0.07;
+  withGlow(ctx, BRAND.gold, 18 * s, () => {
+    ctx.strokeStyle = BRAND.gold;
+    ctx.lineWidth = 5 * s;
+    ctx.beginPath(); ctx.arc(0, 0, 19 * s * pulse, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.75)';
+    ctx.lineWidth = 1.6 * s;
+    ctx.beginPath(); ctx.arc(0, 0, 13 * s * pulse, 0, Math.PI * 2); ctx.stroke();
+  });
+}
+
+// 🂠 Carta SWAG coleccionable (oculta, 1 por nivel)
+export function drawCard(ctx, s, t) {
+  const bob = Math.sin(t * 2.4) * 3 * s;
+  ctx.save();
+  ctx.translate(0, bob);
+  ctx.rotate(Math.sin(t * 1.7) * 0.12);
+  withGlow(ctx, '#FFFFFF', 14 * s, () => {
+    ctx.fillStyle = '#F7F9FC';
+    roundRect(ctx, -12 * s, -16 * s, 24 * s, 32 * s, 4 * s); ctx.fill();
+    ctx.fillStyle = BRAND.red;
+    roundRect(ctx, -12 * s, -16 * s, 24 * s, 8 * s, 4 * s); ctx.fill();
+    ctx.fillStyle = '#0B0B0D';
+    ctx.font = `900 ${17 * s}px Montserrat, system-ui, sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('S', 0, 4 * s);
+  });
+  ctx.restore();
+}
+
 export function drawItem(ctx, ent, t) {
   const bob = Math.sin(t * 3 + ent.lane * 2) * 4 * ent.scale;
   ctx.save();
   ctx.translate(ent.x, ent.y - 34 * ent.scale + bob);
   if (ent.kind === 'star') drawStar(ctx, ent.scale, t);
+  else if (ent.kind === 'coin') drawCoin(ctx, ent.scale, t);
+  else if (ent.kind === 'ring') drawRing(ctx, ent.scale, t);
+  else if (ent.kind === 'card') drawCard(ctx, ent.scale, t);
   else if (ent.pillar === 'A') drawBook(ctx, ent.scale);
   else if (ent.pillar === 'D') drawShoe(ctx, ent.scale);
   else drawHeart(ctx, ent.scale, t);
+  ctx.restore();
+}
+
+// Marcadores de la habilidad MEMORIA: pistas de lo que viene (violeta)
+export function drawXrayMarker(ctx, x, y, ent) {
+  ctx.save();
+  ctx.globalAlpha = 0.85;
+  const color = ent.kind === 'tower' || ent.kind === 'mover' || ent.kind === 'barrier' ? '#FF7379'
+    : ent.kind === 'coin' ? BRAND.cyan
+    : ent.kind === 'star' || ent.kind === 'ring' ? BRAND.gold
+    : ent.kind === 'card' ? '#FFFFFF'
+    : (ent.pillar === 'A' ? '#8FA6FF' : ent.pillar === 'D' ? '#FFAB9E' : '#9BEEF6');
+  ctx.fillStyle = color;
+  ctx.shadowColor = '#9273EF'; ctx.shadowBlur = 8;
+  if (ent.kind === 'tower' || ent.kind === 'mover' || ent.kind === 'barrier') {
+    ctx.beginPath(); ctx.moveTo(x, y - 7); ctx.lineTo(x - 6, y + 5); ctx.lineTo(x + 6, y + 5); ctx.closePath(); ctx.fill();
+  } else {
+    ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+// Flecha de la habilidad ESTRATEGIA sobre el mejor carril (menta)
+export function drawGuideArrow(ctx, x, y, t) {
+  const bob = Math.sin(t * 6) * 5;
+  ctx.save();
+  ctx.translate(x, y + bob);
+  ctx.fillStyle = BRAND.mint;
+  ctx.shadowColor = BRAND.mint; ctx.shadowBlur = 16;
+  ctx.beginPath();
+  ctx.moveTo(0, -16); ctx.lineTo(13, 2); ctx.lineTo(5, 2); ctx.lineTo(5, 14);
+  ctx.lineTo(-5, 14); ctx.lineTo(-5, 2); ctx.lineTo(-13, 2);
+  ctx.closePath(); ctx.fill();
   ctx.restore();
 }
 
@@ -155,7 +247,18 @@ export function drawObstacle(ctx, ent, t) {
   ctx.save();
   ctx.translate(ent.x, ent.y);
   const s = ent.scale;
-  if (ent.kind === 'tower') drawTower(ctx, 44 * s, 108 * s, t + ent.lane);
-  else drawBarrier(ctx, 62 * s, 34 * s, t);
+  if (ent.kind === 'tower' || ent.kind === 'mover') {
+    drawTower(ctx, 44 * s, 108 * s, t + ent.lane);
+    if (ent.kind === 'mover' && s > 0.25) {
+      // indicador de movimiento ◀ ▶ bajo la torre móvil
+      ctx.fillStyle = 'rgba(255,115,121,.85)';
+      ctx.font = `700 ${Math.max(10, 13 * s)}px system-ui`;
+      ctx.textAlign = 'center';
+      const blink = 0.55 + Math.sin(t * 7) * 0.45;
+      ctx.globalAlpha = blink;
+      ctx.fillText('◀ ▶', 0, 16 * s);
+      ctx.globalAlpha = 1;
+    }
+  } else drawBarrier(ctx, 62 * s, 34 * s, t);
   ctx.restore();
 }
